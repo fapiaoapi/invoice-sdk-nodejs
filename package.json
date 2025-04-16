@@ -1,0 +1,51 @@
+{
+  "name": "tax-invoice",
+  "version": "1.0.6",
+  "description": "发票SDK - 提供完整的发票API接口",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "invoice",
+    "tax",
+    "electronic-invoice",
+    "china-tax",
+    "fapiao",
+    "发票",
+    "发票api",
+    "发票sdk",
+    "发票接口",
+    "电子发票",
+    "数电发票",
+    "发票开发平台"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.8.4",
+    "crypto-js": "^4.2.0",
+    "form-data": "^4.0.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.3.2",
+    "typescript": "^5.8.3"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fapiaoapi/invoice-sdk-nodejs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fapiaoapi/invoice-sdk-nodejs/issues"
+  },
+  "homepage": "https://github.com/fapiaoapi/invoice-sdk-nodejs#README.md"
+}

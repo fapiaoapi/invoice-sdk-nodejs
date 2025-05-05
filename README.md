@@ -6,7 +6,7 @@
 
 
 
-[中文文档](https://open.fa-piao.com "文档")
+[中文文档](https://fa-piao.com/doc.html "文档")
 
 * 获取授权
 * 登录数电发票平台

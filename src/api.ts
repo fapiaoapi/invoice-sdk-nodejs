@@ -17,16 +17,20 @@ export class InvoiceAPI {
   /**
    * 获取授权
    * @param nsrsbh 纳税人识别号
+   * @param type 5 管理
    * @returns 授权结果
    */
-  async getAuthorization(nsrsbh: string): Promise<any> {
-    const result = await this.client.request('POST', '/v5/enterprise/authorization', { nsrsbh });
-    
+  async getAuthorization(nsrsbh: string, type: string = "6"): Promise<any> {
+    let params: any = {
+      nsrsbh: nsrsbh,
+      type:type
+    };
+
+    const result = await this.client.request('POST', '/v5/enterprise/authorization', params);
     // 如果成功，设置token
     if (result.code === 200 && result.data && result.data.token) {
       this.client.setToken(result.data.token);
     }
-    
     return result;
   }
 

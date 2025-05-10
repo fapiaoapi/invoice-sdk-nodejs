@@ -130,7 +130,7 @@ async function main() {
         
         // console.log("价税合计：", amount);
         // console.log("税率：", taxRate);
-        // console.log("合计金额：", (amount - parseFloat(se)));
+
         // console.log((isIncludeTax ? "含税" : "不含税") + " 合计税额：", se);
         
         // // 授信额度查询

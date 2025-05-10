@@ -82,5 +82,4 @@ export class Utils {
     
     return tax.toFixed(scale);
   }
-
 }

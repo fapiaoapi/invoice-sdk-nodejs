@@ -20,11 +20,12 @@ export class InvoiceAPI {
    * @returns 授权结果
    */
   async getAuthorization(nsrsbh: string, type: string = "6"): Promise<any> {
-
-    const result = await this.client.request('POST', '/v5/enterprise/authorization', {
+    let params: any = {
       nsrsbh: nsrsbh,
       type:type
-    });
+    };
+
+    const result = await this.client.request('POST', '/v5/enterprise/authorization', params);
     // 如果成功，设置token
     if (result.code === 200 && result.data && result.data.token) {
       this.client.setToken(result.data.token);

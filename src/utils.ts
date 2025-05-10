@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { Decimal } from 'decimal.js';
 
 /**
  * 工具类 - 提供签名、随机字符串等通用功能
@@ -56,67 +57,29 @@ export class Utils {
     return signature.toUpperCase();
   }
 
-  /**
-   * 格式化金额，保留2位小数
-   * @param amount 金额
-   * @returns 格式化后的金额字符串
-   */
-  static formatAmount(amount: number): string {
-    return amount.toFixed(2);
-  }
+
 
   /**
    * 计算税额
    * @param amount 金额
    * @param taxRate 税率
    * @param isIncludeTax 是否含税，默认为false
-   * @returns 税额字符串
+   * @param scale 小数位数，默认2位
+   * @returns 税额
    */
-  static calculateTax(amount: number | string, taxRate: number | string, isIncludeTax: boolean = false): string {
-    const amountNum = parseFloat(amount as string);
-    const taxRateNum = parseFloat(taxRate as string);
+  static calculateTax(amount: number | string, taxRate: number | string, isIncludeTax: boolean = false, scale: number = 2): string {
+    const amountDecimal = new Decimal(amount);
+    const taxRateDecimal = new Decimal(taxRate);
     
-    let tax: number;
+    let tax: Decimal;
     if (isIncludeTax) {
       // 含税计算：税额 = 金额 / (1 + 税率) * 税率
-      tax = amountNum / (1 + taxRateNum) * taxRateNum;
+      tax = amountDecimal.div(taxRateDecimal.add(1)).mul(taxRateDecimal);
     } else {
       // 不含税计算：税额 = 金额 * 税率
-      tax = amountNum * taxRateNum;
+      tax = amountDecimal.mul(taxRateDecimal);
     }
     
-    return Utils.formatAmount(tax);
-  }
-
-  /**
-   * 计算不含税金额
-   * @param amount 含税金额
-   * @param taxRate 税率
-   * @returns 不含税金额字符串
-   */
-  static calculateAmountWithoutTax(amount: number | string, taxRate: number | string): string {
-    const amountNum = parseFloat(amount as string);
-    const taxRateNum = parseFloat(taxRate as string);
-    
-    // 不含税金额 = 含税金额 / (1 + 税率)
-    const amountWithoutTax = amountNum / (1 + taxRateNum);
-    
-    return Utils.formatAmount(amountWithoutTax);
-  }
-
-  /**
-   * 计算含税金额
-   * @param amount 不含税金额
-   * @param taxRate 税率
-   * @returns 含税金额字符串
-   */
-  static calculateAmountWithTax(amount: number | string, taxRate: number | string): string {
-    const amountNum = parseFloat(amount as string);
-    const taxRateNum = parseFloat(taxRate as string);
-    
-    // 含税金额 = 不含税金额 * (1 + 税率)
-    const amountWithTax = amountNum * (1 + taxRateNum);
-    
-    return Utils.formatAmount(amountWithTax);
+    return tax.toFixed(scale);
   }
 }

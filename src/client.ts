@@ -3,6 +3,7 @@ import FormData from 'form-data';
 import { InvoiceConfig, DEFAULT_CONFIG } from './config';
 import { Utils } from './utils';
 
+
 /**
  * 发票API客户端
  */
@@ -25,9 +26,7 @@ export class InvoiceClient {
     this.axiosInstance = axios.create({
       baseURL: this.config.baseUrl,
       timeout: this.config.timeout,
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+      headers: {}
     });
   }
 
@@ -45,6 +44,66 @@ export class InvoiceClient {
    */
   getToken(): string {
     return this.token;
+  }
+
+  private buildQueryString(data: Record<string, any>): string {
+    const params: string[] = [];
+    const appendValue = (key: string, value: any) => {
+      if (value === null || value === undefined) {
+        params.push(`${encodeURIComponent(key)}=`);
+        return;
+      }
+      if (Array.isArray(value)) {
+        value.forEach((item, index) => appendValue(`${key}[${index}]`, item));
+        return;
+      }
+      if (typeof value === 'object') {
+        for (const subKey in value) {
+          if (Object.prototype.hasOwnProperty.call(value, subKey)) {
+            appendValue(`${key}[${subKey}]`, value[subKey]);
+          }
+        }
+        return;
+      }
+      params.push(`${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`);
+    };
+
+    for (const key in data) {
+      if (Object.prototype.hasOwnProperty.call(data, key)) {
+        appendValue(key, data[key]);
+      }
+    }
+    return params.join('&');
+  }
+ 
+  private buildFormData(data: Record<string, any>): FormData {
+    const formData = new FormData();
+    const appendValue = (key: string, value: any) => {
+      if (value === null || value === undefined) {
+        formData.append(key, '');
+        return;
+      }
+      if (Array.isArray(value)) {
+        value.forEach((item, index) => appendValue(`${key}[${index}]`, item));
+        return;
+      }
+      if (typeof value === 'object') {
+        for (const subKey in value) {
+          if (Object.prototype.hasOwnProperty.call(value, subKey)) {
+            appendValue(`${key}[${subKey}]`, value[subKey]);
+          }
+        }
+        return;
+      }
+      formData.append(key, value);
+    };
+
+    for (const key in data) {
+      if (Object.prototype.hasOwnProperty.call(data, key)) {
+        appendValue(key, data[key]);
+      }
+    }
+    return formData;
   }
 
   /**
@@ -82,34 +141,26 @@ export class InvoiceClient {
       headers['Authorization'] = this.token;
     }
 
-    // 创建FormData
-    const formData = new FormData();
-    for (const key in data) {
-      if (Object.prototype.hasOwnProperty.call(data, key)) {
-        // 处理嵌套对象，如fyxm[0][spmc]
-        if (typeof data[key] === 'object' && data[key] !== null && !Array.isArray(data[key])) {
-          for (const subKey in data[key]) {
-            if (Object.prototype.hasOwnProperty.call(data[key], subKey)) {
-              formData.append(`${key}[${subKey}]`, data[key][subKey]);
-            }
-          }
-        } else {
-          // 直接添加键值对，不拆分字符串
-          formData.append(key, data[key]);
-        }
-      }
-    }
-
     try {
-      const response = await this.axiosInstance.request({
-        method,
-        url: path,
-        data: formData,
-        headers: {
+      const upperMethod = method.toUpperCase();
+      let axiosConfig: AxiosRequestConfig = {
+        method: upperMethod,
+        url: path
+      };
+      if (upperMethod === 'GET') {
+        const query = this.buildQueryString(data);
+        axiosConfig.url = query ? `${path}?${query}` : path;
+        axiosConfig.headers = headers;
+      } else {
+        const formData = this.buildFormData(data);
+        axiosConfig.data = formData;
+        axiosConfig.headers = {
           ...headers,
           ...formData.getHeaders()
-        }
-      });
+        };
+      }
+
+      const response = await this.axiosInstance.request(axiosConfig);
 
       return response.data;
     } catch (error) {

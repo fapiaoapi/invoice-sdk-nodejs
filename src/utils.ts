@@ -70,11 +70,15 @@ export class Utils {
   static calculateTax(amount: number | string, taxRate: number | string, isIncludeTax: boolean = false, scale: number = 2): string {
     const amountDecimal = new Decimal(amount);
     const taxRateDecimal = new Decimal(taxRate);
+    const oneDecimal = new Decimal(1);
     
     let tax: Decimal;
     if (isIncludeTax) {
-      // 含税计算：税额 = 金额 / (1 + 税率) * 税率
-      tax = amountDecimal.div(taxRateDecimal.add(1)).mul(taxRateDecimal);
+      //旧 含税计算：税额 = 金额 / (1 + 税率) * 税率
+      // tax = amountDecimal.div(taxRateDecimal.add(1)).mul(taxRateDecimal);
+
+      //新 含税计算：税额 = 1 / (1 + 税率) * 税率 * 含税金额
+      tax = oneDecimal.div(oneDecimal.add(taxRateDecimal)).mul(taxRateDecimal).mul(amountDecimal);
     } else {
       // 不含税计算：税额 = 金额 * 税率
       tax = amountDecimal.mul(taxRateDecimal);

@@ -103,14 +103,7 @@ export class InvoiceAPI {
    * @param params 请求参数
    * @returns 版式文件
    */
-  async getPdfOfdXml(params: {
-    downflag: string;
-    nsrsbh: string;
-    fphm: string;
-    kprq?: string;
-    addSeal?: string;
-    username?: string;
-  }): Promise<any> {
+  async getPdfOfdXml(params: any): Promise<any> {
     return this.client.request('POST', '/v5/enterprise/pdfOfdXml', params);
   }
 

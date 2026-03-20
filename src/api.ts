@@ -17,6 +17,7 @@ export class InvoiceAPI {
   /**
    * 获取授权
    * @param nsrsbh 纳税人识别号
+   * @param type 5 管理
    * @returns 授权结果
    */
   async getAuthorization(nsrsbh: string, type: string = "6"): Promise<any> {
@@ -103,7 +104,14 @@ export class InvoiceAPI {
    * @param params 请求参数
    * @returns 版式文件
    */
-  async getPdfOfdXml(params: any): Promise<any> {
+  async getPdfOfdXml(params: {
+    downflag: string;
+    nsrsbh: string;
+    fphm: string;
+    kprq?: string;
+    addSeal?: string;
+    username?: string;
+  }): Promise<any> {
     return this.client.request('POST', '/v5/enterprise/pdfOfdXml', params);
   }
 

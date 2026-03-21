@@ -38,7 +38,7 @@ async function main() {
       url: 'redis://:test123456@localhost:6379'
     });
     await client.connect();
-    const key = nsrsbh+"@"+username+ "@TOKEN";
+    const key = nsrsbh + "@" + username + "@TOKEN";
     token = await client.get(key);
     if (token) {
       taxInvoice.setToken(token);
@@ -49,6 +49,7 @@ async function main() {
       * @link https://fa-piao.com/doc.html#api1?source=github
       */
       const authResult = await taxInvoice.api.getAuthorization(nsrsbh,type);
+      // const authResult = await taxInvoice.api.getAuthorization(nsrsbh,type,username,password);
       console.log('授权结果:', authResult);
       if (authResult.code === 200) {
         const newToken = authResult.data.token;

@@ -20,11 +20,17 @@ export class InvoiceAPI {
    * @param type 5 管理
    * @returns 授权结果
    */
-  async getAuthorization(nsrsbh: string, type: string = "6"): Promise<any> {
+  async getAuthorization(nsrsbh: string, type: string = "6",username:string="",password:string=""): Promise<any> {
     let params: any = {
       nsrsbh: nsrsbh,
-      type:type
+      type: type,
     };
+    if (username) {
+      params.username = username;
+    }
+    if (password) {
+      params.password = password;
+    }
 
     const result = await this.client.request('POST', '/v5/enterprise/authorization', params);
     // 如果成功，设置token

@@ -220,11 +220,7 @@ async function main() {
       case 401:
         //token过期 重新获取并缓存token
         console.log(`${invoiceResponse.code} 授权失败: ${invoiceResponse.msg}`);
-        break;
-      case 503:
-        //服务器繁忙 重新发起请求即可
-        console.log(`${invoiceResponse.code} 服务器繁忙: ${invoiceResponse.msg}`);
-        break;      
+        break;   
       default:
         console.log(`${invoiceResponse.code} ${invoiceResponse.msg}`);
         break;

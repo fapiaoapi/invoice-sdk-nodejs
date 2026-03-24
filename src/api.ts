@@ -149,6 +149,15 @@ export class InvoiceAPI {
   }
 
   /**
+   * 红字信息表同步
+   * @param params 请求参数
+   * @returns 开票结果
+   */
+  async syncRedInfo(params: any): Promise<any> {
+    return this.client.request('POST', '/v5/enterprise/hzxxbtb', params);
+  }
+
+  /**
    * 切换电子税务局账号
    * @param params 请求参数
    * @returns 切换结果
@@ -174,5 +183,27 @@ export class InvoiceAPI {
    */
    async http(path:string,params: any,method:string): Promise<any> {
     return this.client.request(method, path, params);
+  }
+
+  /**
+   * 自定义POST请求
+   * @param path 路径
+   * @param params 请求参数
+   * @param method 方法
+   * @returns 查询结果
+   */
+   async httpPost(path:string,params: any): Promise<any> {
+    return this.client.request('POST', path, params);
+  }
+
+  /**
+   * 自定义GET请求
+   * @param path 路径
+   * @param params 请求参数
+   * @param method 方法
+   * @returns 查询结果
+   */
+   async httpGet(path:string,params: any): Promise<any> {
+    return this.client.request('GET', path, params);
   }
 }

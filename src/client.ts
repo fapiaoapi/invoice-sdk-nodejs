@@ -11,6 +11,69 @@ export class InvoiceClient {
   private axiosInstance: AxiosInstance;
   private token: string = '';
 
+  private appendFormData(formData: FormData, key: string, value: any): void {
+    if (value === undefined || value === null) {
+      return;
+    }
+    if (Array.isArray(value)) {
+      value.forEach((item, index) => {
+        this.appendFormData(formData, `${key}[${index}]`, item);
+      });
+      return;
+    }
+    if (typeof value === 'object') {
+      Object.keys(value).forEach((subKey) => {
+        this.appendFormData(formData, `${key}[${subKey}]`, value[subKey]);
+      });
+      return;
+    }
+    formData.append(key, value);
+  }
+
+  private formatDebugData(data: any): string {
+    try {
+      return JSON.stringify(data, null, 2);
+    } catch (error) {
+      return String(data);
+    }
+  }
+
+  private debugLogRequest(
+    method: string,
+    path: string,
+    headers: Record<string, string>,
+    data: Record<string, any>
+  ): void {
+    if (!this.config.debug) {
+      return;
+    }
+    const requestInfo = {
+      url: `${this.config.baseUrl}${path}`,
+      method: method.toUpperCase(),
+      headers,
+      params: data
+    };
+    console.log('[TaxInvoice SDK][Request]');
+    console.log(this.formatDebugData(requestInfo));
+  }
+
+  private debugLogResponse(path: string, statusCode: number, responseData: any): void {
+    if (!this.config.debug) {
+      return;
+    }
+    console.log('[TaxInvoice SDK][Response]');
+    // console.log(this.formatDebugData({ url: `${this.config.baseUrl}${path}`, statusCode, data: responseData }));
+    console.log(this.formatDebugData({ StatusCode: statusCode, data: responseData }));
+  }
+
+  private debugLogError(path: string, errorData: any): void {
+    if (!this.config.debug) {
+      return;
+    }
+    console.log('[TaxInvoice SDK][Error]');
+    console.log(this.formatDebugData({ url: `${this.config.baseUrl}${path}`, data: errorData }));
+  }
+
   /**
    * 构造函数
    * @param config 配置信息
@@ -82,21 +145,12 @@ export class InvoiceClient {
       headers['Authorization'] = this.token;
     }
 
-    // 创建FormData
+    this.debugLogRequest(method, path, headers, data);
+
     const formData = new FormData();
     for (const key in data) {
       if (Object.prototype.hasOwnProperty.call(data, key)) {
-        // 处理嵌套对象，如fyxm[0][spmc]
-        if (typeof data[key] === 'object' && data[key] !== null && !Array.isArray(data[key])) {
-          for (const subKey in data[key]) {
-            if (Object.prototype.hasOwnProperty.call(data[key], subKey)) {
-              formData.append(`${key}[${subKey}]`, data[key][subKey]);
-            }
-          }
-        } else {
-          // 直接添加键值对，不拆分字符串
-          formData.append(key, data[key]);
-        }
+        this.appendFormData(formData, key, data[key]);
       }
     }
 
@@ -110,12 +164,17 @@ export class InvoiceClient {
           ...formData.getHeaders()
         }
       });
-
+      this.debugLogResponse(path, response.status, response.data);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
+        this.debugLogError(path, {
+          status: error.response.status,
+          data: error.response.data
+        });
         throw new Error(`请求失败: ${error.response.status} ${JSON.stringify(error.response.data)}`);
       }
+      this.debugLogError(path, String(error));
       throw error;
     }
   }

@@ -6,6 +6,7 @@ export interface InvoiceConfig {
   appKey: string;
   appSecret: string;
   timeout?: number;
+  debug?: boolean;
 }
 
 /**
@@ -15,5 +16,6 @@ export const DEFAULT_CONFIG: InvoiceConfig = {
   baseUrl: 'https://api.fa-piao.com',
   appKey: '',
   appSecret: '',
-  timeout: 30000
+  timeout: 30000,
+  debug: false
 };

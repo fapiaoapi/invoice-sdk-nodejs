@@ -1,6 +1,6 @@
 {
   "name": "tax-invoice",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "发票SDK-提供完整的发票API开票接口",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

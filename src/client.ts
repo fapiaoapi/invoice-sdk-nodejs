@@ -87,7 +87,7 @@ export class InvoiceClient {
 
     this.axiosInstance = axios.create({
       baseURL: this.config.baseUrl,
-      timeout: this.config.timeout,
+      timeout: this.config.timeout || 150000,
       headers: {
         'Content-Type': 'multipart/form-data'
       }

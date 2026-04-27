@@ -137,7 +137,8 @@ export class InvoiceClient {
       'AppKey': this.config.appKey,
       'Sign': signature,
       'TimeStamp': timestamp,
-      'RandomString': randomString
+      'RandomString': randomString,
+      'Sdk': 'Ts1016',
     };
 
     // 如果有token，添加到请求头
